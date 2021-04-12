@@ -1,11 +1,29 @@
-import React from 'react'
-
-const index = () => {
-    return (
-        <div>
-            <input type='text' value='' name='' placeholder='' />
-        </div>
-    )
+import React from "react";
+interface InputProps {
+  label: string;
+  onchange: () => {};
+  value: any;
+  type: string;
+  required: boolean;
+  placeholder?: string;
+  idd: string;
 }
 
-export default index
+const index = (props: InputProps) => {
+  const { label, onchange, value, type, required, placeholder, idd } = props;
+  return (
+    <div>
+      <label htmlFor={idd}>{label}</label>
+      <input
+        onChange={onchange}
+        required={required}
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        id={idd}
+      />
+    </div>
+  );
+};
+
+export default index;
