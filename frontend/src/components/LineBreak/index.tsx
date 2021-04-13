@@ -1,11 +1,11 @@
 import React from 'react'
 
-const index = () => {
+const LineBreak = () => {
     return (
-        <div>
+        <div style={{marginTop: '15px'}}>
             <hr />
         </div>
     )
 }
 
-export default index
+export default LineBreak
