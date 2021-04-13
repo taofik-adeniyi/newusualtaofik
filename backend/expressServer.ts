@@ -1,6 +1,3 @@
-import { connect } from "node:http2";
-
-
 const express = require("express");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
@@ -16,6 +13,8 @@ const url = "mongodb://localhost:27017";
 const mydb = "newusual";
 
 const client = new MongoClient(url);
+
+
 
 
 app.post("/signup", (req: any, res: any) => {
@@ -110,42 +109,123 @@ app.post("/signup", (req: any, res: any) => {
 });
 
 app.post("/signin", (req: any, res: any) => {
-  if (!req.body.email) {
-    return res.status(400).json({ message: "No email provided" });
+  if (!req.body.username) {
+    return res.status(400).json({ message: "No username provided" });
   }
   if (!req.body.password) {
     return res.status(400).json({ message: "No password provided" });
   }
-  if(req.body.email && req.body.password){
+  // const findDocuments = function(db: { collection: (arg0: string) => any; }, callback: (arg0: any) => void) {
+    //   // Get the documents collection
+    //   const collection = db.collection('users');
+    //   // Find some documents
+    
+    //   collection.findOne({username: req.body.username, password: req.body.password}).toArray(function(err: any, user: any) {
+      //     console.log('Found the following records');
+      //     console.log(user);
+      //     callback(user);
+      //   });
+      // };
+      
+      // client.connect((err: any)=>{
+        //   if(err) {
+          //     console.log("for error >>>", err);
+          //     return client.close();
+          //   }else {
+            //   const db = client.db(mydb);
+            //   findDocuments(db, (result: any) => {
+              //     console.log("some result data", result);
+              //     client.close()
+              //   })
+              //   }
+              // })
+              
+              if(req.body.username && req.body.password){
+                
+                MongoClient.connect(url, function(err: any, db: { db: (arg0: string) => any; close: () => void; }){
+                  var dbo = db.db('newusual');
+                  
+                  var onequery = { password: 'password'}
+      //             dbo.collection('users').find({}).toArray(function(err: any, result: any){
+      //               if (err) throw err
+      //               console.log('d result >>>', result);
+      //   db.close()
+      // })
+      
+      // dbo.collection("users").findOne({}, function(err: any, result: any) {
+      //   if (err) throw err;
+      //   console.log(result);
+      //   db.close();
+      // });
+  //     var query = { password: "password" };
+  // dbo.collection("users").find(query).toArray(function(err: any, result: any) {
+  //   if (err) throw err;
+  //   console.log(result);
+  //   db.close();
+  // });
+
+      //   var query = {username: "username", password: "password"}
+      //   dbo.collection('users').find(query, function(err: string | undefined, user: any){
+      //     if(err) throw new Error(err);
+      //     if(!user) 
+      //       console.log('Not found');
+      //     else 
+      //       console.log('Found!');
+      // })
+      // db.close();
+      // res.end();
+      
+      var query = {username: req.body.username, password: req.body.password}
+    dbo.collection("users").find(query).toArray(function(err: any, result: any) {
+      if (err) throw err;
+      console.log(result);
+      db.close();
+    });
+
+      // var query = {username: req.body.username, password: req.body.password}
+      //     var output = dbo.collection('users').findOne(query)
+      //     if(output == req.body.username){
+      //         console.log('Found');
+      //     }else{
+      //         console.log('Not found');
+      //     }
+      //     db.close();
+      //     res.end();
+      // dbo.collection('users').findOne(query, function(err: string | undefined, user: any){
+      //   if(err) throw new Error(err);
+      //   if(!user) 
+      //     console.log('Not found');
+      //   else 
+      //     console.log('Found!');
+      // }) 
+    })
     res.status(200).json({
       message: 'log in success' 
-    })
-    const findDocuments = function(db: { collection: (arg0: string) => any; }, callback: (arg0: any) => void) {
-      // Get the documents collection
-      const collection = db.collection('users');
-      // Find some documents
-      collection.find({}).toArray(function(err: any, docs: any) {
-        console.log('Found the following records');
-        console.log(docs);
-        callback(docs);
-      });
-    };
-
-    client.connect((err: any)=>{
-      if(err) {
-        console.log("for error >>>", err);
-        return client.close();
-      }else {
-      const db = client.db(mydb);
-      findDocuments(db, (result: any) => {
-        console.log("some result data", result);
-        client.close()
-      })
-      }
-    })
-    
+    })            
   }
-});
+})
+
+// username = req.body.username;
+// password = req.body.password;
+// MongoClient.connect(urldb, function(err, db){
+//     var dbo = db.db('LCC');
+//     
+// var query = {username: username, password: password}
+//     var output = dbo.collection('Users').find(query)
+//     if(output == username){
+//         console.log('Found');
+//     }else{
+//         console.log('Not found');
+//     }
+//     db.close();
+//     res.end();
+// dbo.collection('Users').findOne(query, function(err, user){
+//   if(err) throw new Error(err);
+//   if(!user) 
+//     console.log('Not found');
+//   else 
+//     console.log('Found!');
+// })
 
 app.put("/update-profile", (req: any, res: any) => {
   // res.send("Profile Updated!");
@@ -154,35 +234,52 @@ app.put("/update-profile", (req: any, res: any) => {
       message: 'username not provided'
     })
   }
-  if(req.body.email){
-    res.status(400).json({
-      message: 'email not specified'
-    })
-  }
-  if(req.body.email && req.body.username) {
+  // if(req.body.email){
+  //   res.status(400).json({
+  //     message: 'email not specified'
+  //   })
+  // }
+  if(req.body.username) {
     //get values then update the db
-    const updateDocument = function(db: { collection: (arg0: string) => any; }, callback: (arg0: any) => void) {
-      // Get the documents collection
-      const collection = db.collection('documents');
-      // Update document where a is 2, set b equal to 1
-      collection.updateOne({ a: 2 }, { $set: { b: 1 } }, function(err: any, result: any) {
-        console.log('Updated the document with the field a equal to 2');
-        callback(result);
-      });
-    };
+    // const updateDocument = function(db: { collection: (arg0: string) => any; }, callback: (arg0: any) => void) {
+    //   // Get the documents collection
+    //   const collection = db.collection('documents');
+    //   // Update document where a is 2, set b equal to 1
+    //   collection.updateOne({ a: 2 }, { $set: { b: 1 } }, function(err: any, result: any) {
+    //     console.log('Updated the document with the field a equal to 2');
+    //     callback(result);
+    //   });
+    // };
 
-    client.connect((err: any)=>{
-      if (err) {
-        console.log('update error', err);
-      }else {
-      const db = client.db(mydb);
-      // insertDocuments(db, function() {
-        updateDocument(db, function() {
-          client.close();
-        });
-      // });
-      }
-    })
+    // client.connect((err: any)=>{
+    //   if (err) {
+    //     console.log('update error', err);
+    //   }else {
+    //   const db = client.db(mydb);
+    //   // insertDocuments(db, function() {
+    //     updateDocument(db, function() {
+    //       client.close();
+    //     });
+    //   // });
+    //   }
+    // })
+
+    MongoClient.connect(url, function(err: any, db: { db: (arg0: string) => any; close: () => void; }) {
+      if (err) throw err;
+      var dbo = db.db("newusual");
+      var myquery = { username: "blue eyes" };
+      var newvalues = { $set: {email: "Mickey", gender: "Canyon 123" } };
+      dbo.collection("users").updateOne(myquery, newvalues, function(err: any, res: any) {
+        if (err) throw err;
+        console.log("1 document updated");
+        db.close();
+      });
+    });
+
+    res.status(200).json({
+      message: 'put success' 
+    }) 
+
   }
 });
 
