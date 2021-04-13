@@ -234,41 +234,22 @@ app.put("/update-profile", (req: any, res: any) => {
       message: 'username not provided'
     })
   }
-  // if(req.body.email){
-  //   res.status(400).json({
-  //     message: 'email not specified'
-  //   })
-  // }
-  if(req.body.username) {
-    //get values then update the db
-    // const updateDocument = function(db: { collection: (arg0: string) => any; }, callback: (arg0: any) => void) {
-    //   // Get the documents collection
-    //   const collection = db.collection('documents');
-    //   // Update document where a is 2, set b equal to 1
-    //   collection.updateOne({ a: 2 }, { $set: { b: 1 } }, function(err: any, result: any) {
-    //     console.log('Updated the document with the field a equal to 2');
-    //     callback(result);
-    //   });
-    // };
-
-    // client.connect((err: any)=>{
-    //   if (err) {
-    //     console.log('update error', err);
-    //   }else {
-    //   const db = client.db(mydb);
-    //   // insertDocuments(db, function() {
-    //     updateDocument(db, function() {
-    //       client.close();
-    //     });
-    //   // });
-    //   }
-    // })
-
+  if(req.body.email == ""){
+    res.status(400).json({
+      message: 'email not provided'
+    })
+  }
+  if(req.body.gender == ""){
+    res.status(400).json({
+      message: 'gender not provided'
+    })
+  }
+  if(req.body.username && req.body.email && req.body.gender) {
     MongoClient.connect(url, function(err: any, db: { db: (arg0: string) => any; close: () => void; }) {
       if (err) throw err;
       var dbo = db.db("newusual");
-      var myquery = { username: "blue eyes" };
-      var newvalues = { $set: {email: "Mickey", gender: "Canyon 123" } };
+      var myquery = { username: req.body.username };
+      var newvalues = { $set: {email: req.body.email, gender: req.body.gender } };
       dbo.collection("users").updateOne(myquery, newvalues, function(err: any, res: any) {
         if (err) throw err;
         console.log("1 document updated");
